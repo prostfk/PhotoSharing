@@ -11,10 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableAspectJAutoProxy
 public class BeanConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public AspectLogger getCheck(){

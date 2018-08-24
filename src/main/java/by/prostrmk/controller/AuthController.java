@@ -4,6 +4,7 @@ import by.prostrmk.model.entity.User;
 import by.prostrmk.model.repository.UserRepository;
 import by.prostrmk.model.util.StringsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +20,9 @@ public class AuthController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public ModelAndView getRegistration(){
         ModelAndView mav = new ModelAndView("registration");
@@ -26,44 +30,20 @@ public class AuthController {
         return mav;
     }
 
-//    @RequestMapping(value = "/registration",method = RequestMethod.POST)
-//    public String postRegistration(User user){
-//        if (user.getUsername() != null){
-//            User userByUsername = userRepository.findUserByUsername(user.getUsername());
-//
-//            if (userByUsername!=null){
-//                return "redirect:/registration";
-//            }
-//            if (user.getPassword().equals(user.getPasswordAgain())){
-//                user.setPassword(StringsUtil.hash(user.getPassword()));
-//                userRepository.save(user);
-//                return "redirect:/auth";
-//            }
-//        }
-//
-//        return "redirect:/registration";
-//    }
+    @RequestMapping(value = "/registration",method = RequestMethod.POST)
+    public String postRegistration(User user){
+        if (user.validate()){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
+        }
+        return "redirect:/";
+    }
 
     @RequestMapping(value = "/auth",method = RequestMethod.GET)
     public ModelAndView getAuth(){
         return new ModelAndView("auth", "user", new User());
     }
 
-    @RequestMapping(value = "/auth",method = RequestMethod.POST)
-    public String postAuth(User user, HttpSession session){
-        if (user.getUsername() != null && user.getPassword() != null){
-            User userByUsername = userRepository.findUserByUsername(user.getUsername());
-            if (userByUsername != null){
-                if (userByUsername.getPassword().equals(StringsUtil.hash(user.getPassword()))){
-                    session.setAttribute("user", userByUsername);
-                    return "redirect:/";
-                }else{
-                    return "redirect:/auth";
-                }
-            }
-        }
-        return "redirect:/auth";
-    }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public String logOutFromAccount(HttpSession session){

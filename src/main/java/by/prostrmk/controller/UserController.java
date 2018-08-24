@@ -4,13 +4,14 @@ import by.prostrmk.model.entity.Post;
 import by.prostrmk.model.entity.User;
 import by.prostrmk.model.repository.PostRepository;
 import by.prostrmk.model.repository.UserRepository;
+import by.prostrmk.model.util.FileUtil;
 import by.prostrmk.model.util.StringsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
+@Secured("ROLE_USER")
 public class UserController {
 
     @Autowired
@@ -39,74 +41,32 @@ public class UserController {
     }
 
 
-//    Ajax requests
+    @GetMapping(value = "/addPost")
+    public ModelAndView addPost(){
+        return new ModelAndView("createPost", "post", new Post());
+    }
 
-//    @RequestMapping(value = "/subscribe", method = RequestMethod.GET)
-//    @ResponseBody
-//    public String getSub(@PathParam("username")String username, HttpSession session){
-//        User user = (User)session.getAttribute("user");
-//        List<String> subs;
-//        if (user.getSubscriptions()!=null){
-//            subs = new ArrayList<>(Arrays.asList(user.getSubscriptions().split(" ")));
-//        }else{
-//            subs = new ArrayList<>();
-//        }
-//        if (!subs.contains(username)){
-//            subs.add(username);
-//            user.setSubscriptions(StringsUtil.getStringFromCollection(subs));
-//            userRepository.updateUserSubs(user.getId(), user.getSubscriptions());
-//        }
-//        return "Subscribed";
-//    }
+    @PostMapping(value = "/addPost")
+    public String savePost(Post post, MultipartFile file){
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        post.setUsername(name);
+        if (file.getOriginalFilename().length() > 1){
+            post.setPath(new FileUtil().saveFile(file,name));
+        }
+        postRepository.save(post);
+        return "redirect:/me";
+    }
 
-//    @RequestMapping(value = "/unsubscribe", method = RequestMethod.GET)
-//    @ResponseBody
-//    public String getUnSub(@PathParam("username")String username, HttpSession session){
-//        User user = (User) session.getAttribute("user");
-//        List<String> subs;
-//        if (user.getSubscriptions()!=null){
-//            subs = new ArrayList<>(Arrays.asList(user.getSubscriptions().split(" ")));
-//        }else{
-//            subs = new ArrayList<>();
-//        }
-//        subs.remove(username);
-//        user.setSubscriptions(StringsUtil.getStringFromCollection(subs));
-//        userRepository.updateUserSubs(user.getId(), user.getSubscriptions());
-//        return "Subscribe";
-//    }
+    @GetMapping(value = "/me")
+    public ModelAndView getMyPage(){
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        User userByUsername = userRepository.findUserByUsername(name);
+        List<Post> postsByUsername = postRepository.findPostsByUsername(name);
+        ModelAndView modelAndView = new ModelAndView("userPage", "user", userByUsername);
+        modelAndView.addObject("posts", postsByUsername);
 
-//    @RequestMapping(value = "/like", method = RequestMethod.GET)
-//    @ResponseBody
-//    public String getLikeOnPost(@PathParam("id")String id, HttpSession session){
-//        User user = (User) session.getAttribute("user");
-//        Long valueOfId = Long.valueOf(id);
-//        List<String> listOfLikes = null;
-//        Post postById = postRepository.findPostById(valueOfId);
-//        try{
-//            listOfLikes = new ArrayList<>(Arrays.asList(user.getLikedPosts().split(" ")));
-//        }catch (NullPointerException e){
-//            postRepository.setLikesToPost(valueOfId, postById.getLikes() + 1);
-//            user.setLikedPosts(id + " ");
-//            userRepository.updateUserLikes(user.getUsername(),user.getLikedPosts());
-//            return postById.getLikes() + 1 + "";
-//        }
-//        if (listOfLikes.contains(id)){
-//            postById.setLikes(postById.getLikes() - 1);
-//            postRepository.setLikesToPost(valueOfId, postById.getLikes());
-//            listOfLikes.remove(id);
-//            user.setLikedPosts(StringsUtil.getStringFromCollection(listOfLikes));
-//            userRepository.updateUserLikes(user.getUsername(),user.getLikedPosts());
-//            return postById.getLikes() + "";
-//        }else{
-//            postById.setLikes(postById.getLikes() + 1);
-//            postRepository.setLikesToPost(valueOfId, postById.getLikes());
-//            listOfLikes.add(id);
-//            user.setLikedPosts(StringsUtil.getStringFromCollection(listOfLikes));
-//            userRepository.updateUserLikes(user.getUsername(),user.getLikedPosts());
-//            return postById.getLikes() + "";
-//        }
-//    }
-
+        return modelAndView;
+    }
 
 
 }

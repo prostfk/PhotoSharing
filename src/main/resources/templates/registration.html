@@ -32,16 +32,12 @@
                        id="username"/>
                 <span style="float: right;" id="dataUsername"></span>
 
-                <input class="w3-input" value="" placeholder="mail" type="text" onkeyup="checkMailInDataBase()" th:field="*{mail}"
-                       id="mail"/>
-
-                <span style="float: right;" id="dataMail"></span>
 
                 <input class="w3-input" type="password" placeholder="password" onkeyup="doAjax()" th:field="*{password}"
                        id="password"/>
                 <span style="float: right;" id="dataPassword"></span>
 
-                <input class="w3-input" type="password" onkeyup="checkPasswordMatching()" placeholder="confirm password" th:field="*{passwordAgain}"
+                <input class="w3-input" type="password" onkeyup="checkPasswordMatching()" placeholder="confirm password"
                        id="againPassword"/>
                 <span style="float: right;" id="submitPassword"></span>
 
@@ -71,24 +67,6 @@
     }
 </script>
 <script>
-    function doAjax() {
-        $.ajax({
-            url: 'checkPassword',
-            data: ({password: $('#password').val()}),
-            success: function (data) {
-                $('#dataPassword').html(data)
-            }
-        });
-    }
-    function checkMailInDataBase() {
-        $.ajax({
-            url:'checkMail',
-            data: ({mail: $('#mail').val()}),
-            success: function (data) {
-                $('#dataMail').html(data)
-            }
-        });
-    }
     function checkUserInDataBase() {
         $.ajax({
             url:'checkUsername',
@@ -99,14 +77,11 @@
         });
     }
     function checkPasswordMatching() {
-        $.ajax({
-            url: 'checkMatching',
-            data: ({password: $('#password').val(),
-                    againPassword:$('#againPassword').val()}),
-            success: function (data) {
-                $('#submitPassword').html(data)
-            }
-        });
+        let pass = document.getElementById("password");
+        let passAgain = document.getElementById("submitPassword");
+        if (pass !== passAgain){
+            document.getElementById("submitPassword").innerHTML = 'Password does not matching!!';
+        }
     }
     $(document).ready(function () {
         $('input[name=username]').val("");

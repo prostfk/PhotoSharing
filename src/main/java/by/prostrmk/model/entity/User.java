@@ -66,4 +66,8 @@ public class User {
     public void setSubscriptions(List<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
+
+    public boolean validate() {
+        return username.length() > 4 && username.length() < 15 && password.length() > 2 && password.length() < 15;
+    }
 }
