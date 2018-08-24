@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+</head>
+<body>
+<div th:include="~{index.html :: navbar}"></div>
+
+<div>
+    <form action="/search">
+        <input class="w3-input w3-border w3-animated-input" style="border-radius: 15px;outline: 0 !important;" type="text" name="search"
+               placeholder="Search your friend">
+        <input type="submit" value="Submit" class="w3-button"/>
+    </form>
+</div>
+
+
+<div class="w3-container" th:unless="${users.isEmpty()}">
+    <div class="w3-content">
+        <div class="w3-card-4" th:each="user : ${users}">
+            <a th:href="|/${user.getUsername()}|">
+                <h4 th:text="${user.getUsername()}"></h4>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:if="${users.isEmpty()}" class="w3-container">
+    <div class="w3-content">
+        <h6>No users found</h6>
+    </div>
+
+</div>
+
+
+</body>
+</html>

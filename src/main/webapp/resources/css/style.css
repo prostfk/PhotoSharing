@@ -1,0 +1,38 @@
+body {margin:0;}
+
+.icon-bar {
+    width: 100%;
+    background-color: snow;
+    overflow: auto;
+}
+
+.content-icons{
+    width: 50%;
+    margin: auto;
+}
+
+.icon-bar a {
+    float: left;
+    width: 20%;
+    text-align: center;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+    color: black;
+    font-size: 30px;
+}
+
+.icon-bar a:hover {
+    background-color: lightgray;
+}
+
+.active {
+    background-color: #4CAF50 !important;
+}
+
+.no-border{
+    outline: 0 !important;
+}
+
+.round{
+    border-radius: 10px;
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/resources/css/style.css"/>
+
+</head>
+<body>
+
+<div th:include="~{index.html :: navbar}"></div>
+
+<div class="w3-content">
+
+    <div th:if="${user}!=null">
+        <div th:if="${!user.getUsername().equals(username)}">
+            <p th:text="${username}"></p>
+            <button class="w3-btn w3-white w3-border w3-border-white w3-round-xlarge no-border" th:id="${username}" onclick="subscribeOnUser(this.id)">
+                Subscribe
+            </button>
+        </div>
+    </div>
+
+    <div th:if="${posts != null}">
+        <div class="w3-card-4 round" style="margin-top: 10%;" th:each="post : ${posts}">
+            <img th:src="${post.getPathToPhoto()}" style="width: 100%;" alt="Norway">
+            <div class="w3-container w3-center">
+                <h5 th:text="${post.getUsername()}"></h5>
+                <p th:text="${post.getDescription()}"></p>
+                <button th:if="${user}!=null" th:id="${post.id}" onclick="likePost(this.id)" class="w3-button no-border">
+                    <i class="fa fa-heart" >
+                    </i>
+                </button>
+                <p th:id="${post.id} + '-count' " th:text="${post.likes}"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!--<div th:if="${posts != null}">-->
+        <!--<div th:each="post : ${posts}" class="w3-card-4">-->
+            <!--<img th:src="${post.getPath()}" style="width: 30%; height: 30%"/><br/>-->
+            <!--<strong th:text="|${post.getUsername()}: |"></strong>-->
+            <!--<p th:text="${post.getDescription()}"></p>-->
+            <!--<button  th:if="${user}!=null" th:id="${post.id}" onclick="likePost(this.id)" class="w3-button no-border">-->
+                <!--<i class="fa fa-heart" >-->
+                <!--</i>-->
+            <!--</button>-->
+
+            <!--<p th:id="${post.id} + '-count' " th:text="${post.likes}"></p>-->
+        <!--</div>-->
+
+    <!--</div>-->
+
+</div>
+
+<script>
+    var sub = false;
+    function subscribeOnUser(username) {
+        $.ajax({
+            url: sub ? 'unsubscribe' : 'subscribe',
+            data: ({username: username}),
+            success: function (data) {
+                sub = data === 'Subscribed';
+                $('#' + username).html(data)
+            }
+        })
+    }
+
+    function likePost(id) {
+        $.ajax({
+            url: 'like',
+            data: ({id: id}),
+            success: function (data) {
+                $('#' + id + '-count').html(data)
+                // $('#dataPassword').html(data)
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

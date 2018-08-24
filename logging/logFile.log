@@ -1,0 +1,2 @@
+2018-07-03 21:42:56 ERROR AspectCheck:34 - Exception was in MainController: Check exception catching in aspect
+2018-08-24 16:30:08 ERROR AspectLogger:25 - Exception was in MainController: could not execute statement; SQL [n/a]; constraint [null]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement
