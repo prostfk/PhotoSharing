@@ -19,11 +19,11 @@ public class AspectLogger {
 //        System.out.println("pointcut checked method");
     }
 
-
-    @AfterThrowing(pointcut = "allAvailableControllers()", throwing = "e")
-    public void logException(JoinPoint joinPoint, Exception e){
-        logger.error("Exception was in " + joinPoint.getTarget().getClass().getSimpleName() + ": " + e.getMessage());
-    }
+//
+//    @AfterThrowing(pointcut = "allAvailableControllers()", throwing = "e")
+//    public void logException(JoinPoint joinPoint, Exception e){
+//        logger.error("Exception was in " + joinPoint.getTarget().getClass().getSimpleName() + ": " + e.getMessage());
+//    }
 
 }
 

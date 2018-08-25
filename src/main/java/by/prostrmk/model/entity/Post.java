@@ -1,6 +1,8 @@
 package by.prostrmk.model.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,13 +22,14 @@ public class Post {
     @Column
     private String path;
 
-    @OneToOne
-    private Like likes;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Like> likes;
 
     public Post() {
+        likes = new ArrayList<>();
     }
 
-    public Post(String username, String description, String path, Like likes) {
+    public Post(String username, String description, String path, List<Like> likes) {
         this.username = username;
         this.description = description;
         this.path = path;
@@ -65,12 +68,20 @@ public class Post {
         this.path = path;
     }
 
-    public Like getLikes() {
+    public List<Like> getLikes() {
         return likes;
     }
 
-    public void setLikes(Like likes) {
+    public void setLikes(List<Like> likes) {
         this.likes = likes;
+    }
+
+    public void addLike(Like like){
+        likes.add(like);
+    }
+
+    public void removeLike(Like like){
+        likes.remove(like);
     }
 
     @Override

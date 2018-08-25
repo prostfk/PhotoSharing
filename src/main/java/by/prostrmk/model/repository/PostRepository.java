@@ -14,10 +14,16 @@ public interface PostRepository extends CrudRepository<Post, Long> {
     List<Post> findPostsByUsername(String username);
     Post findPostById(Long id);
 
+//    @Query("SELECT * FROM post")
+
     @Transactional
     @Modifying
     @Query("update Post p set p.likes = :likes where p.id = :id")
     int setLikesToPost(@Param("id") Long id,@Param("likes") Long likes);
+
+    @Transactional
+    @Query(value = "SELECT * FROM ", nativeQuery = true)
+    List<Post> findPostsBySubscriotion(Long userId);
 
 
 }

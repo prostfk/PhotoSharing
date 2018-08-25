@@ -9,17 +9,17 @@
     <link rel="stylesheet" href="/resources/css/style.css"/>
 
 </head>
-<body>
+<body onload="set_status()">
 
 <div th:include="~{index.html :: navbar}"></div>
 
 <div class="w3-content">
 
+    <span id="page" th:class="${username}"></span>
     <div th:if="${user}!=null">
-        <div th:if="${!user.getUsername().equals(username)}">
+        <div th:if="${!user.username.equals(username)}">
             <p th:text="${username}"></p>
             <button class="w3-btn w3-white w3-border w3-border-white w3-round-xlarge no-border" th:id="${username}" onclick="subscribeOnUser(this.id)">
-                Subscribe
             </button>
         </div>
     </div>
@@ -34,42 +34,44 @@
                     <i class="fa fa-heart" >
                     </i>
                 </button>
-                <p th:id="${post.id} + '-count' " th:text="${post.likes}"></p>
+                <p th:id="${post.id} + '-count' " th:text="${post.likes.size()}"></p>
             </div>
 
         </div>
     </div>
 
-    <!--<div th:if="${posts != null}">-->
-        <!--<div th:each="post : ${posts}" class="w3-card-4">-->
-            <!--<img th:src="${post.getPath()}" style="width: 30%; height: 30%"/><br/>-->
-            <!--<strong th:text="|${post.getUsername()}: |"></strong>-->
-            <!--<p th:text="${post.getDescription()}"></p>-->
-            <!--<button  th:if="${user}!=null" th:id="${post.id}" onclick="likePost(this.id)" class="w3-button no-border">-->
-                <!--<i class="fa fa-heart" >-->
-                <!--</i>-->
-            <!--</button>-->
-
-            <!--<p th:id="${post.id} + '-count' " th:text="${post.likes}"></p>-->
-        <!--</div>-->
-
-    <!--</div>-->
 
 </div>
 
 <script>
-    var sub = false;
+
+    let sub = false;
+    function set_status() {
+        let username = document.getElementById('page').getAttribute("class");
+       $.ajax({
+           url: 'checkSub',
+           data: ({username: username}),
+           success:function (data) {
+               sub = data === 'true';
+               console.log(data);
+               if (sub){
+                   $('#' + username).html('unsubscribe')
+               }else{
+                   $('#' + username).html('subscribe')
+               }
+           }
+       })
+    }
     function subscribeOnUser(username) {
         $.ajax({
             url: sub ? 'unsubscribe' : 'subscribe',
             data: ({username: username}),
             success: function (data) {
-                sub = data === 'Subscribed';
+                sub = data === 'Unsubscribe';
                 $('#' + username).html(data)
             }
         })
     }
-
     function likePost(id) {
         $.ajax({
             url: 'like',
